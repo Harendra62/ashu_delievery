@@ -1,0 +1,22 @@
+<% if user_signed_in? %>
+  <h1 class="text-center my-4">Categories</h1>
+  <div class="container">
+    <div class="row">
+      <% @categories.each do |category| %>
+        <div class="col-12 col-sm-6 col-md-4 mb-4"> 
+          <div class="card">
+            <div class="card-body text-center">
+              <h5 class="card-title"><%= category.name %></h5>
+              <% if category.category_image.attached? %>
+                <%= image_tag category.category_image, class: 'card-img-top img-fluid', style: 'max-width: 100%; height: auto;' %>
+              <% else %>
+                <%= image_tag 'background.jpg', class: 'card-img-top img-fluid', style: 'max-width: 100%; height: auto;' %> 
+              <% end %>
+              <%= link_to 'View Products', category_path(category), class: 'btn btn-primary mt-3' %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

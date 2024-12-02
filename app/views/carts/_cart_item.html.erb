@@ -1,0 +1,8 @@
+
+  <tr id="cart_item_<%= cart_item.id %>">
+    <% product = Product.find(cart_item.product_id) %>
+    <td><%= product.name %></td>
+    <td><%= cart_item.quantity %></td>
+    <td><%= number_to_currency(product.price * cart_item.quantity) %></td>
+  
+  </tr>

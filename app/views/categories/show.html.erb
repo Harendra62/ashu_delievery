@@ -1,0 +1,35 @@
+<h1 class="text-center my-4 display-4"><%= @category.name %> Products</h1>
+<div class="container">
+  <div class="row">
+    <% if @products.any? %>
+      <% @products.each do |product| %>
+        <div class="col-md-4 mb-4">
+          <div class="card shadow-sm">
+            <div class="card-body text-center">
+              <h5 class="card-title"><%= product.name %></h5>
+              <% if product.product_image .attached? %>
+                <%= image_tag product.product_image, class: 'card-img-top img-fluid', style: 'max-width: 100%; height: auto;' %>
+              <% else %>
+                <%= image_tag 'background.jpg', class: 'card-img-top img-fluid', style: 'max-width: 100%; height: auto;' %> 
+              <% end %>
+              <p class="card-text"><strong>Price:</strong> <%= number_to_currency(product.price) %></p>
+              <p class="card-text"><strong>Description:</strong> <%= truncate(product.description, length: 100) %></p>
+              <%= form_with(url: add_to_cart_path, method: :post, local: true) do |form| %>
+                <div class="form-group">
+                  <label for="quantity_<%= product.id %>">Quantity:</label>
+                  <input type="number" name="quantity" id="quantity_<%= product.id %>" value="1" min="1" class="form-control" style="width: 100px; display: inline;">
+                  <input type="hidden" name="product_id" value="<%= product.id %>">
+                </div>
+                <%= form.submit 'Add to Cart', class: 'btn btn-success' %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="col-12">
+        <p class="text-center alert alert-warning">No products available in this category.</p>
+      </div>
+    <% end %>
+  </div>
+</div>

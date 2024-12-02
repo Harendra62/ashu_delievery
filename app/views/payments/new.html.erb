@@ -1,0 +1,35 @@
+<%= form_with url: order_payments_path(@order), local: true, id: 'payment-form' do |f| %>
+    <div id="card-element"><!-- Stripe's Card Element will go here --></div>
+    <button type="submit">Pay <%= @order.total_amount %> USD</button>
+  <% end %>
+  
+  <script src="https://js.stripe.com/v3/"></script>
+  <script>
+    const stripe = Stripe('<%= @stripe_publishable_key %>');
+    const elements = stripe.elements();
+    const card = elements.create('card');
+    card.mount('#card-element');
+  
+    document.querySelector('#payment-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const { client_secret } = await fetch('<%= order_payments_path(@order) %>', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      }).then(res => res.json());
+  
+      const { error } = await stripe.confirmCardPayment(client_secret, {
+        payment_method: {
+          card: card,
+          billing_details: { email: '<%= current_user.email %>' }
+        }
+      });
+  
+      if (error) {
+        alert(error.message);
+      } else {
+        alert('Payment successful!');
+        window.location.href = '/orders';
+      }
+    });
+  </script>
+  

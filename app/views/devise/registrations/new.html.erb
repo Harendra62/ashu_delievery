@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Delivery App Signup</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f8f9fa; /* Light background */
+    }
+    .card {
+      border: none;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    .card-header {
+      background-color: #ff6f20; /* Bright orange */
+      color: white;
+    }
+    .btn-primary {
+      background-color: #007bff; /* Trustworthy blue */
+      border: none;
+    }
+    .btn-primary:hover {
+      background-color: #0056b3; /* Darker blue on hover */
+    }
+    .form-control {
+      border-radius: 0.25rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header text-center">
+          <h2>Sign Up</h2>
+        </div>
+        <div class="card-body">
+          <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: 'form-horizontal' }) do |f| %>
+            <%= render "devise/shared/error_messages", resource: resource %>
+
+            <div class="form-group">
+              <%= f.label :full_name, class: 'control-label' %>
+              <%= f.text_field :full_name, class: 'form-control', required: true %>
+            </div>
+
+            <div class="form-group">
+              <%= f.label :email, class: 'control-label' %>
+              <%= f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-control', required: true %>
+            </div>
+
+            <div class="form-group">
+              <%= f.label :password, class: 'control-label' %>
+              <% if @minimum_password_length %>
+                <em>(<%= @minimum_password_length %> characters minimum)</em>
+              <% end %><br />
+              <%= f.password_field :password, autocomplete: "new-password", class: 'form-control', required: true %>
+            </div>
+
+            <div class="form-group">
+              <%= f.label :password_confirmation, class: 'control-label' %>
+              <%= f.password_field :password_confirmation, autocomplete: "new-password", class: 'form-control', required: true %>
+            </div>
+
+            <div class="form-group">
+              <%= f.label :mobile_number, class: 'control-label' %>
+              <%= f.telephone_field :mobile_number, class: 'form-control', required: true %>
+            </div>
+
+            <div class="form-group">
+              <%= f.label :pincode, class: 'control-label' %>
+              <%= f.number_field :pincode, class: 'form-control', required: true %>
+            </div>
+
+            <div class="form-group">
+              <%= f.label :address, class: 'control-label' %>
+              <%= f.text_area :address, class: 'form-control', rows: 3, required: true %>
+            </div>
+
+            <div class="form-group">
+              <%= f.label :famous_landscape, class: 'control-label' %>
+              <%= f.text_field :famous_landscape, class: 'form-control' %>
+            </div>
+
+            <div class="form-group text-center">
+              <%= f.submit "Sign Up", class: 'btn btn-primary btn-block' %>
+            </div>
+          <% end %>
+
+          <%= render "devise/shared/links" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

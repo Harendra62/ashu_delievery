@@ -1,0 +1,9 @@
+<%= turbo_stream.replace "cart_items" do %>
+    <% @cart.cart_items.each do |cart_item| %>
+      <div id="cart_item_<%= cart_item.id %>">
+        <p><%= cart_item.product.name %>: <%= cart_item.quantity %></p>
+        <!-- Add more details as needed -->
+      </div>
+    <% end %>
+  <% end %>
+  

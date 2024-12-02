@@ -1,0 +1,27 @@
+<% if @order.present? %> 
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover">
+      <thead class="thead-light">
+        <tr>
+          <th >User</th>
+          <th>Status</th>
+          <th>Total Amount</th>
+          <th>Order Placed</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @order.each do |order| %>
+          <% user = User.find_by(id: order.user_id) %>
+          <tr style="background-color: white;">
+            <td><%= user&.full_name || "N/A" %></td>
+            <td><%= order.status || "N/A" %></td>
+            <td><%= number_to_currency(order.total_amount, unit: "₹", precision: 2) %></td>
+            <td><%= order.created_at.in_time_zone("Asia/Kolkata").strftime("%d-%m-%Y %I:%M %p") %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <p style="background-color:white;text-align:center"><strong>No orders available.</strong></p>
+<% end %>

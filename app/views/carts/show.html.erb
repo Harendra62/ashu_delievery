@@ -1,0 +1,98 @@
+<h1>Your Cart</h1>
+<% if @cart_items.empty? %>
+  <p>Your cart is empty.</p>
+<% else %>
+  <table id="cart-table">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @cart_items.each_with_index do |item, index| %>
+        <% product = Product.find(item.product_id) %>
+        <tr data-product-id="<%= product.id %>" data-product-price="<%= product.price %>">
+          <td style="color: white;"><%= product.name.upcase %></td>
+          <td>
+            <%= form_with url: update_cart_path(item.id), method: :put, local: true do %>
+              <input type="number" class="quantity" name="quantity" value="<%= item[:quantity] %>" min="1" data-index="<%= index %>" />
+              <%= submit_tag 'Update', class: 'update-button' %>
+            <% end %>
+          </td>
+          <td class="item-price" style="color: white;"><%= number_to_currency(product.price * item[:quantity], unit: "₹") %></td>
+          <td>
+            <%= button_to 'Remove', update_cart_path(product.id), method: :delete, data: { confirm: 'Are you sure?' }, class: 'remove-button' %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <h3 id="total-price" style="color: white;">Total: <%= number_to_currency(@total_price, unit: "₹") %></h3>
+
+  <%= button_to 'Buy Now', create_checkout_session_payments_path, method: :post, form: { data: { turbo: false } }, params: { cart_items: @cart_items.map { |item| { product_id: item.product_id, quantity: item.quantity } } }, id: "buy-now-button" %>
+<% end %>
+
+<script>
+document.getElementById('buy-now-button').addEventListener('click', function(event) {
+  event.preventDefault();
+  
+  fetch('<%= create_checkout_session_payments_path %>', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': '<%= form_authenticity_token %>'
+    },
+    body: JSON.stringify({ cart_items: <%= @cart_items.map { |item| { product_id: item.product_id, quantity: item.quantity } }.to_json %> })
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  })
+  .then(data => {
+    window.location.href = data.url;
+  })
+  .catch(error => console.error('Error:', error));
+});
+
+
+  function updateTotal() {
+    let total = 0;
+    document.querySelectorAll('#cart-table tbody tr').forEach(row => {
+      const price = parseFloat(row.dataset.productPrice);
+      const quantityInput = row.querySelector('.quantity');
+      const quantity = parseInt(quantityInput.value) || 1;
+      const itemTotal = price * quantity;
+      total += itemTotal;
+      row.querySelector('.item-price').innerText = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(itemTotal);
+    });
+    document.getElementById('total-price').innerText = 'Total: ' + new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(total);
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.quantity').forEach(input => {
+      input.addEventListener('input', debounce(updateTotal, 300));
+    });
+
+    document.querySelectorAll('.remove-button').forEach(button => {
+      button.addEventListener('click', function() {
+        setTimeout(updateTotal, 100); // Delay to allow for the item to be removed
+      });
+    });
+
+    updateTotal();
+  });
+
+  function debounce(func, delay) {
+    let timer;
+    return function() {
+      clearTimeout(timer);
+      timer = setTimeout(() => func.apply(this, arguments), delay);
+    };
+  }
+</script>
